@@ -21,7 +21,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const version string = "0.9.12"
+const version string = "0.9.13"
 
 var (
 	showVersion                 = flag.Bool("version", false, "Print version information.")
@@ -57,9 +57,11 @@ var (
 	rpkiEnabled                 = flag.Bool("rpki.enabled", false, "Scrape rpki metrics")
 	satelliteEnabled            = flag.Bool("satellite.enabled", false, "Scrape metrics from satellite devices")
 	systemEnabled               = flag.Bool("system.enabled", false, "Scrape system metrics")
+	macEnabled                  = flag.Bool("mac.enabled", false, "Scrape MAC address table metrics")
 	alarmFilter                 = flag.String("alarms.filter", "", "Regex to filter for alerts to ignore")
 	configFile                  = flag.String("config.file", "", "Path to config file")
 	dynamicIfaceLabels          = flag.Bool("dynamic-interface-labels", true, "Parse interface descriptions to get labels dynamicly")
+	interfaceDescriptionRegex   = flag.String("interface-description-regex", "", "give a regex to retrieve the interface description labels")
 	lsEnabled                   = flag.Bool("logical-systems.enabled", false, "Enable logical systems support")
 	powerEnabled                = flag.Bool("power.enabled", true, "Scrape power metrics")
 	cfg                         *config.Config
@@ -182,6 +184,7 @@ func loadConfigFromFlags() *config.Config {
 	c := config.New()
 	c.Targets = strings.Split(*sshHosts, ",")
 	c.LSEnabled = *lsEnabled
+	c.IfDescReg = *interfaceDescriptionRegex
 
 	f := &c.Features
 	f.Alarm = *alarmEnabled
@@ -206,6 +209,7 @@ func loadConfigFromFlags() *config.Config {
 	f.Satellite = *satelliteEnabled
 	f.System = *systemEnabled
 	f.Power = *powerEnabled
+	f.MAC = *macEnabled
 
 	return c
 }
